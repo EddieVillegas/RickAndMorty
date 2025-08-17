@@ -4,6 +4,7 @@ import type{ Character } from "../../types"
 
 type TableProps = {
     data: Character[] | undefined
+    setShowDialog: (param: boolean) => void
 }
 
 type StarProps =  { 
@@ -24,45 +25,38 @@ const Star = ({
 
 const StarRating = ({ totalStars = 5 }) => {
     const [selectedStars, setSelectedStars] = useState(0)
-    return createArray(totalStars)
-        .map((_,i) => 
-            <Star
-                key={i}
-                selected={selectedStars > i}
-                onSelect={() => setSelectedStars(i + 1)}
-            />) 
+    return (
+        <div className='flex justify-center'>
+            {createArray(totalStars)
+                .map((_,i) =>
+                    <Star
+                        key={i}
+                        selected={selectedStars > i}
+                        onSelect={() => setSelectedStars(i + 1)}
+                    />
+            )}
+        </div>
+    )
 }
 
-export default function Table({ data }: TableProps) {
+export default function Table({ data, setShowDialog }: TableProps) {
 
     if(!data || !data.length) return <p>No characters</p>
  
     return (
-        <table>
-
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Image</th>
-                    <th>Power</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {data?.map(({ id, name, image }) =>
-                    <tr key={id}>
-                        <td>{name}</td>
-                        <td>
-                            <img src={image} alt={name} width="50" loading='lazy'/>
-                        </td>
-                        <td>
-                            <StarRating/>
-                        </td>
-                    </tr>
-                )}
-            </tbody>
-
-        </table>
-    )
-    
+        <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-4'>
+            {data?.map(({ id, name, image }) => (
+                <div key={id} className='p-2 cursor-pointer' onClick={() => setShowDialog(true)}>
+                    <img
+                        alt={name}
+                        src={image}
+                        loading='lazy'
+                        className='rounded-2xl'
+                    />
+                    <p className='text-center text-2xl font-bold'>{name}</p>
+                    <StarRating/>
+                </div>
+            ))}
+        </div>
+   )
 }

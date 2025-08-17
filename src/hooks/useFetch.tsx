@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import {
+    useQuery,
+} from "@tanstack/react-query"
 
 type InitialState<T> = {
     data: T | null
@@ -7,44 +9,19 @@ type InitialState<T> = {
 }
 
 export default function useFetch<T>(url: string): InitialState<T> {
-    
-    const initialState: InitialState<T> = {
-        data: null,
-        error: null,
-        isLoading: false,
-    }
-
-    const [info, setInfo] = useState(initialState)
-
-    const abortController = new AbortController()
-
-    const fetchData = async (url: string) => {
-
-        if(!url) return
-
-        const URI = new URL(url)
-        const name = URI.searchParams.get('name')
-
-        if(!name) return
-
-        setInfo(prevState => ({ ...prevState, isLoading: true }))
-        try {
+    const { data, isError, isLoading, error } = useQuery({
+        queryKey: ['character', url],
+        queryFn: async () => {
             const response = await fetch(url)
             if(!response.ok) throw new Error("Somethign was wrong, try again")
-            const data = await response.json()
-            setInfo(prevState => ({ ...prevState, data }))
-        } catch (error: any) {
-            setInfo(prevState => ({ ...prevState, error }))
-        } finally {
-            setInfo(prevState => ({ ...prevState, isLoading: false }))
-        }
+            return response.json()
+        },
+    })
+
+    return {
+        data,
+        isLoading,
+        error: isError ? (error as Error).message : null
     }
-
-    useEffect(() => {
-        fetchData(url)
-        return () => abortController.abort()
-    }, [url])
-
-    return info
 
 }
