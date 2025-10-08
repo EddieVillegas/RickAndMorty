@@ -8,6 +8,7 @@ type Props = {
 }
 
 export default function Pagination({ nextPage, prevPage, onChangeNextPage, onChangePrevPage}: Props) {
+    
     return (
         <>
             <ul className={styles.list}>

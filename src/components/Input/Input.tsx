@@ -13,14 +13,16 @@ export default function Input({ onChange }: Props){
     }, [])
 
     return (
-        <input
-            className="w-full rounded-2xl p-3 text-center text-4xl border-gray-700 border-b-black"
-            type="text"
-            name="name"
-            ref={inputRef}
-            onChange={onChange}
-            autoComplete="false"
-            placeholder="search a character"
-        />
+        <div className="w-1/4 mx-auto">
+            <input
+                className="w-full rounded-2xl p-1 text-center text-xl border border-black mb-5"
+                type="text"
+                name="name"
+                ref={inputRef}
+                onChange={onChange}
+                autoComplete="off"
+                placeholder="search a character"
+            />
+        </div>
     )
 }

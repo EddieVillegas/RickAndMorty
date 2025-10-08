@@ -2,26 +2,23 @@ import {
     useQuery,
 } from "@tanstack/react-query"
 
-type InitialState<T> = {
-    data: T | null
-    isLoading: boolean,
-    error: string | null,
+async function fetchData(
+    url: string 
+): Promise<any> {
+    const response = await fetch(url)
+    if(!response.ok) throw new Error("Somethign was wrong, try again")
+    const data = response.json()
+    return data
 }
 
-export default function useFetch<T>(url: string): InitialState<T> {
-    const { data, isError, isLoading, error } = useQuery({
+export default function useFetch<T>(
+    url: string
+): T {
+    const query = useQuery({
         queryKey: ['character', url],
-        queryFn: async () => {
-            const response = await fetch(url)
-            if(!response.ok) throw new Error("Somethign was wrong, try again")
-            return response.json()
-        },
+        queryFn: () => fetchData(url),
     })
 
-    return {
-        data,
-        isLoading,
-        error: isError ? (error as Error).message : null
-    }
+    return query as T
 
 }

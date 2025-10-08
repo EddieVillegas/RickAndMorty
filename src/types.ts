@@ -19,3 +19,9 @@ export type Response = {
     },
     results: Characters
 }
+
+export type InitialState<T> = {
+    data: T | null
+    isLoading: boolean,
+    error: string | null,
+}
