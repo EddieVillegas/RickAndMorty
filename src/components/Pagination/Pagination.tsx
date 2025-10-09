@@ -1,5 +1,3 @@
-import styles from "./Pagination.module.css"
-
 type Props = {
     nextPage: string | undefined
     prevPage: string | undefined
@@ -7,18 +5,24 @@ type Props = {
     onChangeNextPage: () => void
 }
 
-export default function Pagination({ nextPage, prevPage, onChangeNextPage, onChangePrevPage}: Props) {
-    
+export default function Pagination({ 
+    nextPage, 
+    prevPage, 
+    onChangeNextPage, 
+    onChangePrevPage
+}: Props) {
+
+    const existPrevPage = !!prevPage
+    const existNextPage = !!nextPage
+
     return (
-        <>
-            <ul className={styles.list}>
-                {prevPage && <li>
-                    <a href="#" onClick={onChangePrevPage}>Prev</a>
-                </li>}
-                {nextPage && <li>
-                    <a href="#" onClick={onChangeNextPage}>Next</a>
-                </li>}
-            </ul>
-        </>
+        <ul className="flex gap-5 mx-auto w-50">
+            <li>
+                <button disabled={!existPrevPage} onClick={onChangePrevPage} className="disabled:opacity-75 disabled:cursor-not-allowed p-2 rounded-2xl text-black bg-amber-50 cursor-pointer">&lt;Previous</button>
+            </li>
+            <li>
+                <button disabled={!existNextPage} onClick={onChangeNextPage} className="disabled:opacity-75 disabled:cursor-not-allowed p-2 rounded-2xl text-black bg-amber-50 cursor-pointer">Next &gt;</button>
+            </li>
+        </ul>
     )
 }

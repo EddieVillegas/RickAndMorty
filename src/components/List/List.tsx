@@ -46,11 +46,13 @@ export default function Table({
     setShowDialog,
 }: TableProps) {
 
-    if(!data || !data.length) return <p>No characters</p>
+    if(!data?.length) return <p>No characters</p>
  
     const { selectCharacter} = useRickAndMorty()
 
-    const handleOnClick = (character: Character) => {
+    const handleOnClick = (
+        character: Character
+    ) => {
         selectCharacter(character)
         setShowDialog(true)
     }
@@ -58,7 +60,7 @@ export default function Table({
     return (
         <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-4'>
             {data?.map((character) => 
-                <Card character={character} onClick={handleOnClick}>
+                <Card key={character.id} character={character} onClick={handleOnClick}>
                     <StarRating/>
                 </Card>
             )}

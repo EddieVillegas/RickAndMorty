@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 import useFetch from "../hooks/useFetch";
 import type { Response, InitialState, Character } from "../types";
 
@@ -21,10 +21,26 @@ export default function RickAndMortyProvider(props: Props) {
     const [selectedCharacter, setSelectedCharater] = useState<Character|null>(null)
     const { data, error, isLoading } = useFetch<InitialState<Response>>(url)
     
-    const handleUrl = (url: string) => setUrl(url)
-    const selectCharacter = (character: Character) => setSelectedCharater(character)
+    const handleUrl = useCallback((url: string) => setUrl(url), [])
+    const selectCharacter = useCallback((character: Character) => setSelectedCharater(character), [])
 
-    const value = { data, error, isLoading, handleUrl, url: props.url, selectedCharacter,  selectCharacter }
+    const value = useMemo(() => ({ 
+        data, 
+        error, 
+        isLoading, 
+        handleUrl, 
+        url: props.url, 
+        selectedCharacter,  
+        selectCharacter 
+    }), [
+        data,
+        error, 
+        isLoading, 
+        handleUrl, 
+        props.url, 
+        selectCharacter, 
+        selectedCharacter
+    ])
 
     return(
         <context.Provider value={value}>
