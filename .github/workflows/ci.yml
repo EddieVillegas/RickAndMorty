@@ -17,5 +17,3 @@ jobs:
         run: netlify deploy --alias=dev
         env:
           NETLIFY_AUTH_TOKEN=${{ secrets.NETLIFY_AUTH_TOKEN }}
-  build:
-  deploy:
