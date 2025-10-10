@@ -5,8 +5,8 @@ jobs:
     name: test
     runs-on: ubuntu-latest
     steps:
-        uses: actions/checkout
-        uses: actions/setup-node@v4
+      - uses: actions/checkout
+      - uses: actions/setup-node@v4
         width:
           node-version: 24
         name: Install netlify
