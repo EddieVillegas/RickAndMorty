@@ -1,0 +1,21 @@
+name: CI
+on: [push]
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+        uses: actions/checkout
+        uses: actions/setup-node@v4
+        width:
+          node-version: 24
+        name: Install netlify
+        run: npm install netlify-cli -D
+        name: Install deps
+        run: npm install
+        name: deploy
+        run: netlify deploy --alias=dev
+        env:
+          NETLIFY_AUTH_TOKEN=${{ secrets.NETLIFY_AUTH_TOKEN }}
+  build:
+  deploy:
