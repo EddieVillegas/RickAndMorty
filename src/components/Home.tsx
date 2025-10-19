@@ -1,13 +1,12 @@
-import { useState, lazy, Suspense, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { debounce } from "lodash";
 import Input from "./Input/Input";
 import Dialog from './Dialog/Dialog';
 import useRickAndMorty from "../hooks/useRickAndMorty";
 import '../App.css'
-import LoadingSpinner from "./Loading/Loading";
-
-const List = lazy(() => import("./List/List"))
-const Pagination = lazy(() => import("./Pagination/Pagination"))
+import withLoadingAndError from "./withCharacters/withCharacters";
+import List from './List/List'
+import Pagination from "./Pagination/Pagination";
 
 export default function Home() {
   
@@ -19,14 +18,9 @@ export default function Home() {
   const handleOnChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => handleUrl(`${url}?${e.target.name}=${e.target.value}`), [url])
   const debounceOnChange = debounce(handleOnChange, 1000)
   const handleDialog = useCallback((value: boolean) => setShowDialog(value), [])
-
-  if(isLoading) return <LoadingSpinner/>
-  if(error) return <p>Something was wrong, try again</p>
-  if(!data) return <div>No data</div>
   
-  const {results: characters, info: { next, prev }} = data
+  const CharactersWithLoadingAndError = withLoadingAndError(List)
   
-
   return (
     <section className='container mx-auto p-5'>
       <Dialog
@@ -35,18 +29,18 @@ export default function Home() {
       />
       <h1 className='text-3xl font-bold text-center'>Rick & Morty</h1>
       <Input onChange={debounceOnChange}/>
-      <Suspense fallback={<div>Waiting...</div>}>
-        <List
-          data={characters}
-          setShowDialog={handleDialog}
+        <CharactersWithLoadingAndError
+          error={error} 
+          data={data?.results}
+          isLoading={isLoading}
+          handleDialog={handleDialog}
         />
         <Pagination
-          prevPage={prev}
-          nextPage={next}
-          onChangeNextPage={() => onChangeNextPage(next)}
-          onChangePrevPage={() => onChangePrevPage(prev)}
+          prevPage={data?.info.prev}
+          nextPage={data?.info.next}
+          onChangeNextPage={() => onChangeNextPage(data?.info.next)}
+          onChangePrevPage={() => onChangePrevPage(data?.info.prev)}
         />
-      </Suspense>
     </section>
   )
 }

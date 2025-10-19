@@ -12,10 +12,11 @@ export default function Card({
     onClick,
 }: Props){
     return(
-        <div 
+        <div
+            data-testid='algo'
             key={character.id}
             className='p-2 border border-neutral-50 hover:shadow-lg transition-shadow rounded-2xl max-w-xs cursor-pointer' 
-            onClick={() => onClick(character)} 
+            onClick={() => onClick(character)}
         >
             <img
                 alt={character.name}

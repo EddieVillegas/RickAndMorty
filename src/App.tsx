@@ -13,11 +13,11 @@ export default function App(){
   
   return(
     <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RickAndMortyProvider url={url}>
-        <Home />
-      </RickAndMortyProvider>
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <RickAndMortyProvider url={url}>
+          <Home />
+        </RickAndMortyProvider>
+      </QueryClientProvider>
   </React.StrictMode>    
   )
 }

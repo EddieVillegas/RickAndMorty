@@ -25,10 +25,10 @@ const Star = ({
         color={selected ? "red" : "gray"} 
     />
 
-const StarRating = ({ totalStars = 5 }) => {
+export const StarRating = ({ totalStars = 5 }) => {
     const [selectedStars, setSelectedStars] = useState(0)
     return (
-        <div className='flex justify-center'>
+        <div className='flex justify-center has-[:hover]:grayscale has-[:hover]:brightness-50'>
             {createArray(totalStars)
                 .map((_,i) =>
                     <Star
@@ -46,8 +46,6 @@ export default function Table({
     setShowDialog,
 }: TableProps) {
 
-    if(!data?.length) return <p>No characters</p>
- 
     const { selectCharacter} = useRickAndMorty()
 
     const handleOnClick = (
