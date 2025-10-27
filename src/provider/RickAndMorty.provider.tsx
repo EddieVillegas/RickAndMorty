@@ -1,50 +1,74 @@
-import { createContext, useCallback, useMemo, useState } from "react";
+import { debounce } from "lodash";
 import useFetch from "../hooks/useFetch";
 import type { Response, InitialState, Character } from "../types";
+import { createContext, PropsWithChildren, useCallback, useMemo, useState, useRef, RefObject} from "react";
 
 type Context = InitialState<Response> & {
-    handleUrl: (url: string) => void
-    url: string
+    openDialog: () => void
+    closeDialog: () => void
     selectedCharacter: Character | null
-    selectCharacter: (character: Character) => void
+    onChangePage: (page: string) => void
+    handleOnChange: (url: string) => void
+    selectCharacter: (id: number) => void
+    dialogRef: RefObject<HTMLDialogElement | null>
 } | null
 
 type Props = {
     url: string
-    children: React.ReactElement
 }
 
-export const context = createContext<Context>(null)
+export const Context = createContext<Context>(null)
 
-export default function RickAndMortyProvider(props: Props) {
+export default function RickAndMortyProvider(
+    props: PropsWithChildren<Props>
+) {
+    
+    //custom hooks
+    const [selectedCharacterId, setSelectedCharaterId] = useState<number|null>(null)
+
+    //state
     const [url, setUrl] = useState<string>(props.url)
-    const [selectedCharacter, setSelectedCharater] = useState<Character|null>(null)
+    const dialogRef = useRef<HTMLDialogElement|null>(null)
     const { data, error, isLoading } = useFetch<InitialState<Response>>(url)
     
-    const handleUrl = useCallback((url: string) => setUrl(url), [])
-    const selectCharacter = useCallback((character: Character) => setSelectedCharater(character), [])
-
+    //optimization
+    const onChangePage = useCallback((next: string) => handleUrl(next), [])
+    const handleUrl = useCallback((newUrl: string) => setUrl(newUrl), [])
+    const selectCharacter = useCallback((id: number) => setSelectedCharaterId(id), [])
+    const selectedCharacter = useMemo(() => data?.results.find(c => Number(c.id) === selectedCharacterId) ?? null, [selectedCharacterId])
+    
+    //handle functions
+    const debounceOnChange = debounce(handleUrl, 1000)
+    const closeDialog = () => dialogRef.current && dialogRef.current.close()
+    const openDialog = () => dialogRef.current && dialogRef.current.showModal()
+    
     const value = useMemo(() => ({ 
         data, 
-        error, 
-        isLoading, 
-        handleUrl, 
-        url: props.url, 
-        selectedCharacter,  
-        selectCharacter 
+        error,
+        dialogRef,
+        isLoading,
+        openDialog,
+        closeDialog,
+        selectedCharacter,
+        selectCharacter,
+        handleOnChange: debounceOnChange,
+        onChangePage,
     }), [
         data,
-        error, 
-        isLoading, 
-        handleUrl, 
-        props.url, 
+        error,
+        dialogRef,
+        isLoading,
+        openDialog,
+        closeDialog,
+        onChangePage,
         selectCharacter, 
-        selectedCharacter
+        selectedCharacter,
+        debounceOnChange,
     ])
 
     return(
-        <context.Provider value={value}>
+        <Context value={value}>
             {props.children}
-        </context.Provider>
+        </Context>
     )
 }

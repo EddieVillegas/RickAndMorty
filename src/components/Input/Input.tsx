@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react"
 
 type Props = {
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onChange: (key: string) => void
 }
 
 export default function Input({ onChange }: Props){
@@ -12,6 +12,10 @@ export default function Input({ onChange }: Props){
         inputRef.current?.focus()
     }, [])
 
+    const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(`${e.target.name}=${e.target.value}`)
+    }
+
     return (
         <div className="w-1/4 mx-auto">
             <input
@@ -19,7 +23,7 @@ export default function Input({ onChange }: Props){
                 type="text"
                 name="name"
                 ref={inputRef}
-                onChange={onChange}
+                onChange={handleOnChange}
                 autoComplete="off"
                 placeholder="search a character"
             />

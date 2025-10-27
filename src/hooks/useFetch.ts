@@ -2,9 +2,9 @@ import {
     useQuery,
 } from "@tanstack/react-query"
 
-async function fetchData(
+async function fetchData<T>(
     url: string 
-): Promise<any> {
+): Promise<T> {
     const response = await fetch(url)
     if(!response.ok) throw new Error("Somethign was wrong, try again")
     const data = response.json()

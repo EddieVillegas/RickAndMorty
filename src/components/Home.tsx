@@ -1,46 +1,50 @@
-import { useState, useCallback } from "react";
-import { debounce } from "lodash";
+import '../App.css'
+import List from './List/List'
 import Input from "./Input/Input";
 import Dialog from './Dialog/Dialog';
-import useRickAndMorty from "../hooks/useRickAndMorty";
-import '../App.css'
-import withLoadingAndError from "./withCharacters/withCharacters";
-import List from './List/List'
+import Container from "./Container/Containers";
 import Pagination from "./Pagination/Pagination";
+import useRickAndMorty from "../hooks/useRickAndMorty";
 
-export default function Home() {
+export default function Home() {  
   
-  const [showDialog, setShowDialog] = useState<boolean>(false)
-  const { handleUrl, url, data, error, isLoading } = useRickAndMorty()
-  
-  const onChangeNextPage = useCallback((next: string) => handleUrl(next), [])
-  const onChangePrevPage = useCallback((prev: string) => handleUrl(prev), [])
-  const handleOnChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => handleUrl(`${url}?${e.target.name}=${e.target.value}`), [url])
-  const debounceOnChange = debounce(handleOnChange, 1000)
-  const handleDialog = useCallback((value: boolean) => setShowDialog(value), [])
-  
-  const CharactersWithLoadingAndError = withLoadingAndError(List)
-  
+  const { 
+    data,
+    error,
+    isLoading,
+    handleOnChange,
+    onChangePage,
+    closeDialog,
+    openDialog,
+    dialogRef,
+  } = useRickAndMorty()
+
   return (
     <section className='container mx-auto p-5'>
-      <Dialog
-        showDialog={showDialog}
-        setShowDialog={handleDialog}
+      <Dialog 
+        ref={dialogRef}
+        closeDialog={closeDialog}
       />
-      <h1 className='text-3xl font-bold text-center'>Rick & Morty</h1>
-      <Input onChange={debounceOnChange}/>
-        <CharactersWithLoadingAndError
-          error={error} 
-          data={data?.results}
-          isLoading={isLoading}
-          handleDialog={handleDialog}
+      <h1 className='text-3xl font-bold text-center'>
+        Rick & Morty
+      </h1>
+      <Input onChange={handleOnChange}/>
+      <Container
+        error={error}
+        data={data?.results}
+        isLoading={isLoading}
+      >
+        <List 
+          data={data?.results} 
+          setShowDialog={openDialog} 
         />
-        <Pagination
-          prevPage={data?.info.prev}
-          nextPage={data?.info.next}
-          onChangeNextPage={() => onChangeNextPage(data?.info.next)}
-          onChangePrevPage={() => onChangePrevPage(data?.info.prev)}
-        />
+      </Container>
+      <Pagination
+        prevPage={data?.info.prev}
+        nextPage={data?.info.next}
+        onChangeNextPage={() => onChangePage(data?.info.next)}
+        onChangePrevPage={() => onChangePage(data?.info.prev)}
+      />
     </section>
   )
 }

@@ -6,7 +6,7 @@ import Card from '../Card/Card';
 
 type TableProps = {
     data: Character[] | undefined
-    setShowDialog: (param: boolean) => void
+    setShowDialog: () => void
 }
 
 type StarProps =  { 
@@ -49,16 +49,16 @@ export default function Table({
     const { selectCharacter} = useRickAndMorty()
 
     const handleOnClick = (
-        character: Character
+        id: number
     ) => {
-        selectCharacter(character)
-        setShowDialog(true)
+        selectCharacter(id)
+        setShowDialog()
     }
 
     return (
         <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-4'>
             {data?.map((character) => 
-                <Card key={character.id} character={character} onClick={handleOnClick}>
+                <Card key={character.id} character={character} onClick={() => handleOnClick(Number(character.id))}>
                     <StarRating/>
                 </Card>
             )}
