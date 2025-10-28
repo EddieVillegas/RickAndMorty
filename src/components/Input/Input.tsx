@@ -13,7 +13,8 @@ export default function Input({ onChange }: Props){
     }, [])
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(`${e.target.name}=${e.target.value}`)
+        if(!e.target.value) return    
+        onChange(`?${e.target.name}=${e.target.value}`)
     }
 
     return (

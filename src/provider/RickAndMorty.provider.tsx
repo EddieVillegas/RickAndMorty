@@ -1,16 +1,21 @@
 import { debounce } from "lodash";
 import useFetch from "../hooks/useFetch";
-import type { Response, InitialState, Character } from "../types";
+import type { Response, InitialState, Characters, Character } from "../types";
 import { createContext, PropsWithChildren, useCallback, useMemo, useState, useRef, RefObject} from "react";
 
-type Context = InitialState<Response> & {
+type Context = {
+    error: string | null,
+    isLoading: boolean,
+    characters: Characters | undefined,
     openDialog: () => void
     closeDialog: () => void
     selectedCharacter: Character | null
-    onChangePage: (page: string) => void
-    handleOnChange: (url: string) => void
+    onChangePage: (page: string | undefined) => void
+    handleOnChange: (url: string | undefined) => void
     selectCharacter: (id: number) => void
     dialogRef: RefObject<HTMLDialogElement | null>
+    nextPage: string | undefined
+    prevPage: string | undefined
 } | null
 
 type Props = {
@@ -33,7 +38,7 @@ export default function RickAndMortyProvider(
     
     //optimization
     const onChangePage = useCallback((next: string) => handleUrl(next), [])
-    const handleUrl = useCallback((newUrl: string) => setUrl(newUrl), [])
+    const handleUrl = useCallback((newUrl: string) => setUrl(url + newUrl), [])
     const selectCharacter = useCallback((id: number) => setSelectedCharaterId(id), [])
     const selectedCharacter = useMemo(() => data?.results.find(c => Number(c.id) === selectedCharacterId) ?? null, [selectedCharacterId])
     
@@ -42,8 +47,18 @@ export default function RickAndMortyProvider(
     const closeDialog = () => dialogRef.current && dialogRef.current.close()
     const openDialog = () => dialogRef.current && dialogRef.current.showModal()
     
+    const nextPage = useMemo(() => {
+        const url = data?.info.next ? new URL(data?.info.next) : ""
+        return url.search
+    }, [data])
+    const prevPage = useMemo(() => {
+        const url = data?.info.prev ? new URL(data?.info.prev) : ""
+        return url.search
+    }, [data])
+    const characters = useMemo(() => data?.results, [data])
+
     const value = useMemo(() => ({ 
-        data, 
+        characters,
         error,
         dialogRef,
         isLoading,
@@ -53,7 +68,11 @@ export default function RickAndMortyProvider(
         selectCharacter,
         handleOnChange: debounceOnChange,
         onChangePage,
+        nextPage,
+        prevPage
     }), [
+        nextPage,
+        prevPage,
         data,
         error,
         dialogRef,
@@ -64,6 +83,7 @@ export default function RickAndMortyProvider(
         selectCharacter, 
         selectedCharacter,
         debounceOnChange,
+        characters
     ])
 
     return(

@@ -14,9 +14,5 @@ export default function Containers(
     if(error) return <p>Something was wrong, try again</p>
     if(!data) return <div>No data</div>
     
-    return (
-        <div>
-            {children}
-        </div>
-    )
+    return children
 }

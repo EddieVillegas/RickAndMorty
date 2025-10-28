@@ -56,11 +56,9 @@ export default function Table({
     }
 
     return (
-        <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-4'>
+        <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-rows-4 justify-center'>
             {data?.map((character) => 
-                <Card key={character.id} character={character} onClick={() => handleOnClick(Number(character.id))}>
-                    <StarRating/>
-                </Card>
+                <Card key={character.id} character={character} onClick={() => handleOnClick(Number(character.id))}></Card>
             )}
         </div>
    )
