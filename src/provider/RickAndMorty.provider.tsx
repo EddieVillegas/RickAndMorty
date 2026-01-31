@@ -1,19 +1,16 @@
 import { debounce } from "lodash";
 import useFetch from "../hooks/useFetch";
 import type { Response, InitialState, Characters, Character } from "../types";
-import { createContext, PropsWithChildren, useCallback, useMemo, useState, useRef, RefObject} from "react";
+import { createContext, PropsWithChildren, useCallback, useMemo, useState } from "react";
 
 type Context = {
     error: string | null,
     isLoading: boolean,
     characters: Characters | undefined,
-    openDialog: () => void
-    closeDialog: () => void
     selectedCharacter: Character | null
     onChangePage: (page: string | undefined) => void
     handleOnChange: (url: string | undefined) => void
     selectCharacter: (id: number) => void
-    dialogRef: RefObject<HTMLDialogElement | null>
     nextPage: string | undefined
     prevPage: string | undefined
 } | null
@@ -33,7 +30,7 @@ export default function RickAndMortyProvider(
 
     //state
     const [url, setUrl] = useState<string>(props.url)
-    const dialogRef = useRef<HTMLDialogElement|null>(null)
+    
     const { data, error, isLoading } = useFetch<InitialState<Response>>(url)
     
     //optimization
@@ -44,8 +41,6 @@ export default function RickAndMortyProvider(
     
     //handle functions
     const debounceOnChange = debounce(handleUrl, 1000)
-    const closeDialog = () => dialogRef.current && dialogRef.current.close()
-    const openDialog = () => dialogRef.current && dialogRef.current.showModal()
     
     const nextPage = useMemo(() => {
         const url = data?.info.next ? new URL(data?.info.next) : ""
@@ -60,10 +55,7 @@ export default function RickAndMortyProvider(
     const value = useMemo(() => ({ 
         characters,
         error,
-        dialogRef,
         isLoading,
-        openDialog,
-        closeDialog,
         selectedCharacter,
         selectCharacter,
         handleOnChange: debounceOnChange,
@@ -75,10 +67,7 @@ export default function RickAndMortyProvider(
         prevPage,
         data,
         error,
-        dialogRef,
         isLoading,
-        openDialog,
-        closeDialog,
         onChangePage,
         selectCharacter, 
         selectedCharacter,

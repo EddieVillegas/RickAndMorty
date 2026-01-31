@@ -5,6 +5,7 @@ import Dialog from './Dialog/Dialog';
 import Container from "./Container/Containers";
 import Pagination from "./Pagination/Pagination";
 import useRickAndMorty from "../hooks/useRickAndMorty";
+import useDialog from '../hooks/useDialog';
 
 export default function Home() {  
   
@@ -13,13 +14,16 @@ export default function Home() {
     prevPage,
     nextPage,
     isLoading,
-    dialogRef,
     characters,
-    openDialog,
-    closeDialog,
     onChangePage,
     handleOnChange,
   } = useRickAndMorty()
+
+  const {
+    dialogRef,
+    openDialog,
+    closeDialog,
+  } = useDialog()
 
   return (
     <section className='container mx-auto'>
